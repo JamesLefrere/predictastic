@@ -25,27 +25,28 @@ if (Meteor.isClient) {
 
   Template.selectDate.events({
     'change #date': function () {
-      Session.set('selected_date', $('#date').val());
+      var theDate = Date.parse($('#date').val()) / 1000;
+      Session.set('selected_date', theDate);
     },
     'click #submit': function () {
-      var theEvent = Session.get('selected_event');
-      var theDate = Session.get('selected_date');
-      var prediction = Predictions.findOne({ eventName: theEvent });
+      if (typeof(Session.get('selected_date')) !== 'number' || typeof(Session.get('selected_event')) !== 'string')
+        return false;
+      var prediction = Predictions.findOne({ eventName: Session.get('selected_event') });
       if (typeof(prediction) === 'undefined') {
-        var payload = { eventName: theEvent, dates: {} };
-        payload.dates[theDate] = { score: 1 };
+        var payload = { eventName: Session.get('selected_event'), dates: {} };
+        payload.dates[Session.get('selected_date')] = { score: 1 };
         Predictions.insert(payload);
       } else {
         var payload = prediction;
-        if (theDate in prediction.dates) {
-          payload.dates[theDate].score++;
+        if (Session.get('selected_date') in prediction.dates) {
+          payload.dates[Session.get('selected_date')].score++;
         } else {
-          payload.dates[theDate] = { score: 1 };
+          payload.dates[Session.get('selected_date')] = { score: 1 };
         }
         Predictions.update({ _id: prediction._id }, payload);
       }
       var prediction = Predictions.findOne({
-        eventName: theEvent
+        eventName: Session.get('selected_event')
       });
     }
   });
