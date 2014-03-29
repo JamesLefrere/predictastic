@@ -13,6 +13,11 @@
 
 <template name="selectEvent">
   <input type="text" id="event" />
+  <div id="auto">
+  {{#each results}}
+    <div>{{result}}</div>
+  {{/each}}
+  </div>
 </template>
 
 <template name="selectDate">

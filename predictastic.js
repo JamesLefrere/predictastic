@@ -18,6 +18,10 @@ if (Meteor.isClient) {
   });
 
   Template.selectEvent.events({
+    // 'keyup #event': function () {
+    //   var re = new RegExp($('#event').val(), 'g');
+    //   (Predictions.find({ eventName: re })));
+    // },
     'change #event': function () {
       Session.set('selected_event', $('#event').val());
     }
@@ -29,25 +33,7 @@ if (Meteor.isClient) {
       Session.set('selected_date', theDate);
     },
     'click #submit': function () {
-      if (typeof(Session.get('selected_date')) !== 'number' || typeof(Session.get('selected_event')) !== 'string')
-        return false;
-      var prediction = Predictions.findOne({ eventName: Session.get('selected_event') });
-      if (typeof(prediction) === 'undefined') {
-        var payload = { eventName: Session.get('selected_event'), dates: {} };
-        payload.dates[Session.get('selected_date')] = { score: 1 };
-        Predictions.insert(payload);
-      } else {
-        var payload = prediction;
-        if (Session.get('selected_date') in prediction.dates) {
-          payload.dates[Session.get('selected_date')].score++;
-        } else {
-          payload.dates[Session.get('selected_date')] = { score: 1 };
-        }
-        Predictions.update({ _id: prediction._id }, payload);
-      }
-      var prediction = Predictions.findOne({
-        eventName: Session.get('selected_event')
-      });
+      Meteor.call('submit', Session.get('selected_event'), Session.get('selected_date'));
     }
   });
 
@@ -61,4 +47,27 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     //
   });
+
+  Meteor.methods({
+    submit: function (theEvent, theDate) {
+      check(theEvent, String);
+      check(theDate, Number);
+      var prediction = Predictions.findOne({ eventName: theEvent });
+      if (typeof(prediction) === 'undefined') {
+        var payload = { eventName: theEvent, dates: {} };
+        payload.dates[theDate] = { score: 1 };
+        Predictions.insert(payload);
+      } else {
+        var payload = prediction;
+        if (theDate in prediction.dates) {
+          payload.dates[theDate].score++;
+        } else {
+          payload.dates[theDate] = { score: 1 };
+        }
+        Predictions.update({ _id: prediction._id }, payload);
+      }
+      return true;
+    }
+  });
+
 }
