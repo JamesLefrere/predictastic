@@ -1,0 +1,38 @@
+<head>
+  <title>predictastic</title>
+</head>
+
+<body>
+  <h2>Select an event</h2>
+  {{> selectEvent}}
+  <h2>Select a date</h2>
+  {{> selectDate}}
+  <h2>Results</h2>
+  {{> results}}
+</body>
+
+<template name="selectEvent">
+  <input type="text" id="event" />
+</template>
+
+<template name="selectDate">
+  <input type="date" id="date" />
+  <input type="submit" id="submit" value="Submit" />
+</template>
+
+<template name="results">
+  <div id="results">
+  {{#each results}}
+    {{> result}}
+  {{/each}}
+  </div>
+</template>
+
+<template name="result">
+  <div class="event">
+    <h4>{{eventName}}</h4>
+    {{#each listDates dates}}
+      <p>{{name}}: {{value.score}}</p>
+    {{/each}}
+  </div>
+</template>
