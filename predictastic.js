@@ -52,6 +52,11 @@ if (Meteor.isServer) {
     submit: function (theEvent, theDate) {
       check(theEvent, String);
       check(theDate, Number);
+      dateCheck = Match.Where(function (a) {
+        var now = new Date().setHours(0, 0, 0, 0) / 1000;
+        return a >= now;
+      });
+      check(theDate, dateCheck);
       var prediction = Predictions.findOne({ eventName: theEvent });
       if (typeof(prediction) === 'undefined') {
         var payload = { eventName: theEvent, dates: {} };
