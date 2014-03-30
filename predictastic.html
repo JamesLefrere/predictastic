@@ -27,17 +27,9 @@
 
 <template name="results">
   <div id="results">
-  {{#each prediction}}
-    {{> result}}
+  <h4>{{eventName}}</h4>
+  {{#each listDates dates}}
+    <p>{{name}}: {{value.score}}</p>
   {{/each}}
-  </div>
-</template>
-
-<template name="result">
-  <div class="event">
-    <h4>{{eventName}}</h4>
-    {{#each listDates dates}}
-      <p>{{name}}: {{value.score}}</p>
-    {{/each}}
   </div>
 </template>

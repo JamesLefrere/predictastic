@@ -22,25 +22,30 @@ Template.selectEvent.events({
     sort: { eventName: 1 }});
   },
   'change #event': function () {
-    Session.set('selected_event', $('#event').val());
+    Session.set('selectedEvent', $('#event').val());
   }
 });
 
 Template.selectDate.events({
   'change #date': function () {
     var theDate = Date.parse($('#date').val()) / 1000;
-    Session.set('selected_date', theDate);
+    Session.set('selectedDate', theDate);
   },
   'click #submit': function () {
-    Meteor.call('submit', Session.get('selected_event'), Session.get('selected_date'));
-    Meteor.call('results', Session.get('selected_event'), function (err, data) {
+    Meteor.call('submit', Session.get('selectedEvent'), Session.get('selectedDate'), function (err, data) {
       if (err)
         console.log(err);
-      Session.set('results', data);
+      if (data) {
+        Meteor.call('getResults', Session.get('selectedEvent'), function (err, data) {
+          if (err)
+            console.log(err);
+          Session.set('results', data);
+        });
+      }
     });
   }
 });
 
-Template.results.results = function () {
+Template.results.data = function () {
   return Session.get('results');
 };

@@ -27,8 +27,8 @@ Meteor.methods({
     }
     return true;
   },
-  results: function (theEvent) {
+  getResults: function (theEvent) {
     check(theEvent, String);
-    return Predictions.find({ eventName: theEvent });
+    return Predictions.findOne({ eventName: theEvent });
   }
 });
