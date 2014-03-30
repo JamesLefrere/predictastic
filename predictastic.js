@@ -18,10 +18,14 @@ if (Meteor.isClient) {
   });
 
   Template.selectEvent.events({
-    // 'keyup #event': function () {
-    //   var re = new RegExp($('#event').val(), 'g');
-    //   (Predictions.find({ eventName: re })));
-    // },
+    'keyup #event': function () {
+    AutoCompletion.autocomplete({
+      element: '#event',
+      collection: Predictions,
+      field: 'eventName',
+      limit: 5,
+      sort: { eventName: 1 }});
+    },
     'change #event': function () {
       Session.set('selected_event', $('#event').val());
     }
